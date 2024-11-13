@@ -59,10 +59,23 @@ Read the Contract Address from terminal:
 
 ![](./Assets/Screenshots/2024-11-10T18-10-59.png)
 
+
 ```sh
  # replace this with your own addr, in anvil, it should be the same
 export USDC_ADDR=0x700b6A60ce7EaaEA56F065753d8dcB9653dbAD35
 export FACTORY_ADDR=0xA15BB66138824a1c7167f5E85b957d04Dd34E468
+```
+
+Get NFT address from the function:
+
+```sh
+cast call $FACTORY_ADDR "getNftAddress()"
+```
+
+Export the address:
+
+```sh
+export NFT_ADDR=0x07e06c8fab4a6bf1e242f3d786bc5b19785bb921
 ```
 
 Verify USDC is deployed properly (local test only):
@@ -133,7 +146,7 @@ We get:
 We have 1 contract deployed, so we just need to copy the last few hexes.
 
 ```sh
-export BILL_ADDR=0x07e06c8fab4a6bf1e242f3d786bc5b19785bb921 # remember the 0x
+export BILL_ADDR=0xe88c975ff7dc40e80a84b6d0a81f23317322f325 # remember the 0x
 ```
 
 #### 3. Get the `Amount Payable` for Friend 1 from the Smart Contract
@@ -209,32 +222,51 @@ cast call $USDC_ADDR "balanceOf(address)(uint256)" $BILL_ADDR
 
 ![](./Assets/Screenshots/2024-11-10T20-40-38.png)
 
-#### 8. Finally, owner can withdraw it
+#### 8. Suppose owner owes other people money, he will transfer the bill to the new owner
 
-Owner's current balance:
+Owner approve SplitBill:
 
 ```sh
-cast call $USDC_ADDR "balanceOf(address)(uint256)" 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+cast send --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 \
+$NFT_ADDR "approve(address,uint256)" $BILL_ADDR 1
 ```
 
-![](./Assets/Screenshots/2024-11-10T20-41-12.png)
+Owner transfer to new owner:
+
+```sh
+cast send --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 \
+$BILL_ADDR "transferOwnership(address)" 0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65
+```
+
+New Owner's current balance:
+
+```sh
+cast call $USDC_ADDR "balanceOf(address)(uint256)" 0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65
+```
+
+![](./Assets/Screenshots/2024-11-13T22-03-48.png)
+
+New Owner approve SplitBill:
+
+```sh
+cast send --private-key 0x47e179ec197488593b187f80a00eb0da91f1b9d0b13f8733639f19c30a34926a \
+$NFT_ADDR "approve(address,uint256)" $BILL_ADDR 1
+```
 
 Call withdraw:
 
 ```sh
-cast send --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 \
+cast send --private-key 0x47e179ec197488593b187f80a00eb0da91f1b9d0b13f8733639f19c30a34926a \
 $BILL_ADDR "withdraw()" \
---from 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+--from 0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65
 ```
-
-![](./Assets/Screenshots/2024-11-10T20-41-40.png)
+![](./Assets/Screenshots/2024-11-13T22-04-55.png)
 
 Success!
 
-Owner's new balance:
+New Owner's new balance:
 
 ```sh
-cast call $USDC_ADDR "balanceOf(address)(uint256)" 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+cast call $USDC_ADDR "balanceOf(address)(uint256)" 0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65
 ```
-
-![](./Assets/Screenshots/2024-11-10T20-42-18.png)
+![](./Assets/Screenshots/2024-11-13T22-05-26.png)
