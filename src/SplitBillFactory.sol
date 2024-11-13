@@ -90,9 +90,8 @@ contract SplitBillFactory {
         uint256 tokenId = splitBillNFT.mintNFT(proposal.creator);
 
         // Deploy the new SplitBill contract
-        SplitBill newSplitBill = new SplitBill(
-            proposal.creator, proposal.totalAmount, proposal.participants, usdcToken, address(splitBillNFT), tokenId
-        );
+        SplitBill newSplitBill =
+            new SplitBill(proposal.totalAmount, proposal.participants, usdcToken, address(splitBillNFT), tokenId);
 
         // Store the address of the new contract
         splitBills[proposal.creator].push(address(newSplitBill));

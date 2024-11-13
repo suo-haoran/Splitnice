@@ -13,7 +13,6 @@ contract SplitBill {
     mapping(address => bool) public hasContributed;
     mapping(address => uint256) public amountPayable;
     bool public isPaid;
-    address public owner;
     uint256 public billTokenId;
     IERC20 public usdcToken;
     ERC721Burnable public billNFT;
@@ -23,7 +22,7 @@ contract SplitBill {
     event OwnershipTransferred(address indexed newOwner);
 
     modifier onlyOwner() {
-        require(msg.sender == owner, "Only the contract owner can perform this action");
+        require(msg.sender == billNFT.ownerOf(billTokenId), "Only the contract owner can perform this action");
         _;
     }
 
@@ -38,14 +37,12 @@ contract SplitBill {
     }
 
     constructor(
-        address _ownerAddress,
         uint256 _totalAmount,
         address[] memory _participants,
         address _usdcAddress,
         address _nftAddress,
         uint256 _tokenId
     ) {
-        owner = _ownerAddress;
         totalAmount = _totalAmount;
         totalCollected = 0;
         isPaid = false;
@@ -86,9 +83,9 @@ contract SplitBill {
         isPaid = true;
         billNFT.burn(billTokenId);
         // Transfer the collected USDC to the owner
-        bool success = usdcToken.transfer(owner, amount);
+        bool success = usdcToken.transfer(msg.sender, amount);
         require(success, "USDC transfer failed");
-        emit OwnerWithdraw(owner, amount);
+        emit OwnerWithdraw(msg.sender, amount);
     }
 
     // Get the amount a participant has contributed
@@ -104,10 +101,8 @@ contract SplitBill {
     // Function to transfer ownership of the bill NFT
     function transferOwnership(address newOwner) external onlyOwner {
         require(newOwner != address(0), "Invalid address");
-        address oldOwner = owner;
-        owner = newOwner;
         // Transfer the NFT representing the split bill to the new owner
-        billNFT.safeTransferFrom(oldOwner, newOwner, billTokenId);
+        billNFT.safeTransferFrom(billNFT.ownerOf(billTokenId), newOwner, billTokenId);
 
         emit OwnershipTransferred(newOwner);
     }

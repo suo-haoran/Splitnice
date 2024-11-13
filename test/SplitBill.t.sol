@@ -44,7 +44,7 @@ contract SplitBillTest is Test, IERC721Receiver {
         vm.prank(nftContractOwner);
         tokenId = nft.mintNFT(owner);
 
-        splitBill = new SplitBill(owner, totalAmount, participants, address(usdc), address(nft), tokenId);
+        splitBill = new SplitBill(totalAmount, participants, address(usdc), address(nft), tokenId);
     }
 
     // Test participants can contribute and owner can withdraw
