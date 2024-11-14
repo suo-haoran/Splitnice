@@ -58,8 +58,7 @@ forge script script/SplitBillFactory.s.sol --fork-url http://127.0.0.1:8545 --br
 
 Read the Contract Address from terminal: 
 
-![](./Assets/Screenshots/2024-11-10T18-10-59.png)
-
+![](./Assets/Screenshots/2024-11-14T15-41-38.png)
 
 ```sh
  # replace this with your own addr, in anvil, it should be the same
