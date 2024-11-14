@@ -2,9 +2,10 @@
 
 Splitnice is a on-chain solution to solve the bill splitting problems. It has the following features:
 
-- Owner proposes an amount and participants will approve it before the contract is deployed
-- Owner can withdraw fund after all the participants has paid
-- Owner can transfer the ownership of the bill to someone.
+- Multi-sig: Owner proposes an amount and participants will approve it before the contract is deployed
+- ERC721 (NFT): Owner can transfer the ownership of the bill to someone.
+- ERC20 (USDC): Payments are settled in USDC
+- Owner can withdraw fund after all the participants has paid, and the NFT will be burned.
 
 ## Disclaimer
 
